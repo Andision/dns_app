@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: List
+items:
+# Authoritative Server Deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: authoritative-server
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: authoritative-server
+    template:
+      metadata:
+        labels:
+          app: authoritative-server
+      spec:
+        containers:
+        - name: authoritative-server
+          image: andisionzhang/as:latest
+          ports:
+          - containerPort: 53533
+
+# Authoritative Server Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: authoritative-server-service
+  spec:
+    type: NodePort
+    selector:
+      app: authoritative-server
+    ports:
+    - protocol: UDP
+      port: 53533
+      nodePort: 30001
+
+# Fibonacci Server Deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: fibonacci-server
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: fibonacci-server
+    template:
+      metadata:
+        labels:
+          app: fibonacci-server
+      spec:
+        containers:
+        - name: fibonacci-server
+          image: andisionzhang/fs:latest
+          ports:
+          - containerPort: 9090
+
+# Fibonacci Server Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: fibonacci-server-service
+  spec:
+    type: NodePort
+    selector:
+      app: fibonacci-server
+    ports:
+    - protocol: TCP
+      port: 9090
+      nodePort: 30002
+
+# User Server Deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: user-server
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: user-server
+    template:
+      metadata:
+        labels:
+          app: user-server
+      spec:
+        containers:
+        - name: user-server
+          image: andisionzhang/us:latest
+          ports:
+          - containerPort: 8080
+
+# User Server Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: user-server-service
+  spec:
+    type: NodePort
+    selector:
+      app: user-server
+    ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 30003
